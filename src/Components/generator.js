@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { fabric } from "fabric";
-import { Button, Container } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  TextField,
+} from "@mui/material";
 
 const Generator = () => {
   const [canvas, setCanvas] = useState("");
@@ -14,7 +21,7 @@ const Generator = () => {
     new fabric.Canvas("canvas", {
       x: 50,
       y: 50,
-      height: 800,
+      height: 1000,
       width: w,
       backgroundColor: "pink",
     });
@@ -22,8 +29,9 @@ const Generator = () => {
   const addText = (canvi) => {
     const txt = new fabric.Text(text, {
       fontFamily: "Impact",
-      stroke: "#fff",
+      stroke: "#000",
       strokeWidth: 0.5,
+      fill: "#fff",
       left: 100,
       top: 100,
     });
@@ -36,11 +44,10 @@ const Generator = () => {
       .toDataURL("image/png")
       .replace("image/png", "image/octet-stream"); // here is the most important part because if you dont replace you will get a DOM 18 exception.
 
-    window.location.href = image + ".png"; // it will save locally
+    window.location.href = image; // it will save locally
   };
 
   const setImage = (e) => {
-    let selImg = null;
     var file = e.target.files[0];
     var reader = new FileReader();
     reader.onload = function (f) {
@@ -77,26 +84,43 @@ const Generator = () => {
   };
 
   return (
-    <Container maxWidth="xxl">
-      <div className="input-group">
-        <textarea
-          onChange={(e) => setText(e.target.value)}
-          value={text}
-          className="form-control"
-          placeholder="Enter Text to Insert..."
-        ></textarea>
+    <Container maxWidth="xxl" className="mt-5">
+      <Card>
+        <CardContent>
+          <h2 className="text-center mt-3 mb-3">Meme Generator</h2>
+          <hr />
+          <Grid container spacing={10}>
+            <Grid item md={12}>
+              <TextField
+                multiline
+                rows={4}
+                label="Enter Text to Add"
+                onChange={(e) => setText(e.target.value)}
+                value={text}
+                className="form-control"
+                placeholder="Enter Text to Insert..."
+              />
+              <Button
+                className=" mt-3"
+                onClick={() => addText(canvas)}
+                variant="contained"
+                color="success"
+              >
+                Add Text
+              </Button>
+              <input
+                type="file"
+                className="form-control mt-4"
+                onChange={setImage}
+              />
+            </Grid>
+          </Grid>
+          <Button className="mt-5" variant="contained" onClick={saveImg}>
+            Save Image
+          </Button>
+        </CardContent>
+      </Card>
 
-        <button className="btn btn-primary" onClick={() => addText(canvas)}>
-          Text
-        </button>
-      </div>
-      {/* <button onClick={() => addRect(canvas)}>Rectangle</button> */}
-      <input type="file" className="form-control" onChange={setImage} />
-      <br />
-      <br />
-      <Button variant="contained" onClick={saveImg}>
-        Save Image
-      </Button>
       <canvas id="canvas" />
     </Container>
   );
